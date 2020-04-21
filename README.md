@@ -1,2 +1,2 @@
-# nlp_course
+# NLP Course
 NLP course from Coursera
