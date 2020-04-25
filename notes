@@ -1,0 +1,19 @@
+WEEK 1:  TOKENIZING TEXT
+
+How to turn text into sequences of numbers:
+a number was the value of a key value pair with the key being the word. 
+
+For example: you could represent the word Hello with the value three, and then replace every instance of the word with a three in a sequence. 
+
+Fot his week, I just learnet how to compute a string of numbers representing words in a sequence
+
+WEEK 2: embedding
+
+What are embeddings?
+
+A process to help get sentiment out of text. This can be learned from a group of words in the same way as features are extracted from images to learn some patterns. This process is called embedding,
+
+
+Words and similar words (with the same sentiment) are clustered as vectors in a multi-dimensional space. SO 1 cluster will have similar words (eg., boring, annoying, etc.)
+
+Fr example: the word dog can be represented by a vector pointing in one direction; the word canine would also be represented by another vector pointing in a similar direction; so you could conclude that their sentiment is similar
