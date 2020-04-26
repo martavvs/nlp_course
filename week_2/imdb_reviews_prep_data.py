@@ -24,6 +24,7 @@ train_labels = []
 test_sentences = []
 test_labels = []
 
+#copy from tf arrays to arrays of strings
 for sentence, label in train:
     train_sentences.append(str(sentence.numpy()))
     train_labels.append(label.numpy())
@@ -32,7 +33,11 @@ for sentence, label in test:
     test_sentences.append(str(sentence.numpy()))
     test_labels.append(label.numpy())
 
-#sentences
+#LABELS: need np arrays and not just lists
+train_labels = np.array(train_labels)
+test_labels = np.array(test_labels)
+
+#SENTENCES
 tokenizer = Tokenizer(num_words = VOCAB_SIZE ,oov_token='OOV')
 tokenizer.fit_on_texts(train_sentences)
 word_index = tokenizer.word_index #dictionary with number key for each new word in the input sentences
@@ -40,12 +45,9 @@ word_index = tokenizer.word_index #dictionary with number key for each new word 
 train_sequences = tokenizer.texts_to_sequences(train_sentences) #Transform each text in texts in a sequence of integers
 train_sequences_padded = pad_sequences(train_sequences,maxlen=MAX_LENGTH,truncating='post') #The input of a NN needs to have the same size
 
-test_sequences = tokenizer.texts_to_sequences(test_sentences) #Transform each text in texts in a sequence of integers
+test_sequences = tokenizer.texts_to_sequences(test_sentences) #Use the tokenizer from train set (a lot more oov since more words that are not in the train set)
 test_sequences_padded = pad_sequences(test_sequences, maxlen=MAX_LENGTH)
 
-#labels
-train_labels = np.array(train_labels)
-test_labels = np.array(test_labels)
 
 #SEQUENTIAL MODEL API (Simple but less flexible)
 model = tf.keras.Sequential([
