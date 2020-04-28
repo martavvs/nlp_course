@@ -12,15 +12,12 @@ def prepare_data(dir):
         print(subdir)
         dir_files = dir + subdir +'/'
         for filename in os.listdir(dir_files):
-            try:
-                with open(dir_files + filename, 'r') as f:
-                    # classes[str(counter)].append(f.readlines())
-                    lines = f.read().splitlines()
-                    with open('classes.csv', 'a+') as csv_file:
-                        writer = csv.writer(csv_file)
-                        writer.writerow((str(subdir), lines))
-            except:
-                'Error'
+
+            with open(dir_files + filename, 'rb') as f:
+                lines = f.read().splitlines()
+                with open('classes.csv', 'a+') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow((str(subdir), lines))
 
 if __name__ == '__main__':
         dir = 'datasets/bbc/'

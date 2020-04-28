@@ -9,7 +9,7 @@ tfds.disable_progress_bar()
 from model_imdb_reviews import get_model
 
 VOCAB_SIZE = 10000
-EMBEDDING_DIM = 16
+EMBEDDING_DIM = 16 #nb dimension of the vector representing the word encoding
 MAX_LENGTH = 120
 NUM_EPOCHS = 10
 
