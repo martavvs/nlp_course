@@ -18,9 +18,6 @@ test = datasets['test']
 
 #Subword tokenization: because each token represents a part of a word (eg., 1: 'Ten'; 2:'sor')
 tokenizer = ds_info.features['text'].encoder
-#atrtibutes of tokenizer: subwords and vocab_size
-print(tokenizer.subwords)
-print(tokenizer.vocab_size)
 
 train_batches = (
     train.shuffle(BUFFER_SIZE).padded_batch(32,
@@ -33,8 +30,10 @@ test_batches = (
 #SEQUENTIAL MODEL API (Simple but less flexible)
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(tokenizer.vocab_size, EMBEDDING_DIM),
-    tf.keras.layers.GlobalAveragePooling1D(),
-    tf.keras.layers.Dense(6, activation='relu'),
+    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64, return_sequences=True)),  #cell state of LSTM goes in both directions
+    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(1, activation='sigmoid')
 ])
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])

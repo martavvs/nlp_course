@@ -5,8 +5,8 @@ https://www.coursera.org/learn/natural-language-processing-tensorflow/home/welco
 
 ## Requirements:
 - python==3.x
-- Tensorflow==2.x
-- Tensorflow-datasets (pip install -q tensorflow-datasets)
+- Tensorflow==2.1
+- Tensorflow-datasets (pip install tensorflow-datasets)
 ## Week 1
 Sentiment in text
 
