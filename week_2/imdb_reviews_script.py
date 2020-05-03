@@ -50,9 +50,17 @@ test_sequences_padded = pad_sequences(test_sequences, maxlen=MAX_LENGTH)
 
 
 #SEQUENTIAL MODEL API (Simple but less flexible)
+# model = tf.keras.Sequential([
+#     tf.keras.layers.Embedding(VOCAB_SIZE, EMBEDDING_DIM, input_length=MAX_LENGTH),
+#     tf.keras.layers.Flatten(),
+#     tf.keras.layers.Dense(6, activation='relu'),
+#     tf.keras.layers.Dense(1, activation='sigmoid')
+# ])
+
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(VOCAB_SIZE, EMBEDDING_DIM, input_length=MAX_LENGTH),
-    tf.keras.layers.Flatten(),
+    tf.keras.layers.Conv1D(128, 5, activation='relu'),
+    tf.keras.layers.GlobalAveragePooling1D(),
     tf.keras.layers.Dense(6, activation='relu'),
     tf.keras.layers.Dense(1, activation='sigmoid')
 ])
@@ -60,5 +68,7 @@ model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 model.summary()
 
 
-model.fit(train_sequences_padded, train_labels, epochs=NUM_EPOCHS,
+hist = model.fit(train_sequences_padded, train_labels, epochs=NUM_EPOCHS,
             validation_data=(test_sequences_padded, test_labels))
+
+print(hist.history['accuracy'])
