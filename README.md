@@ -20,5 +20,9 @@ http://ai.stanford.edu/~amaas/data/sentiment/
 ## Week 3
 Sequence models
 
+Exercise 3:
+Sentiment140 dataset. Contains 1,600,000 tweets with the following annotation: 0 = negative, 4 = positive. Can be used to detect sentiment. Can be found here:
+https://www.kaggle.com/kazanova/sentiment140/data#
+
 ## Week 4
 Sequece models and literature
