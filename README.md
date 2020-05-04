@@ -21,7 +21,7 @@ http://ai.stanford.edu/~amaas/data/sentiment/
 Sequence models
 
 Exercise 3:
-Sentiment140 dataset. Contains 1,600,000 tweets with the following annotation: 0 = negative, 4 = positive. Can be used to detect sentiment. Can be found here:
+Sentiment140 dataset containing 1,600,000 tweets with the following annotation: 0 = negative, 4 = positive. Can be used to detect sentiment and can be found in the following URL:
 https://www.kaggle.com/kazanova/sentiment140/data#
 
 To train, I used pre-trained word vectors from the GloVe algorithm. More detail here:

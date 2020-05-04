@@ -1,2 +1,6 @@
-week_1/*.csv
+week_*/*.csv
 note*
+*venv
+week*/*txt
+week*/.*
+week*/_*
