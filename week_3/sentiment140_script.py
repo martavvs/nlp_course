@@ -3,27 +3,25 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+from pre_trained_weights import get_pre_trained_weights
 #stop words (commonly used but useless) taken from:
 #https://github.com/Yoast/YoastSEO.js/blob/develop/src/config/stopwords.js
 stop_words = ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "could", "did", "do", "does", "doing", "down", "during", "each", "few", "for", "from", "further", "had", "has", "have", "having", "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "it", "it's", "its", "itself", "let's", "me", "more", "most", "my", "myself", "nor", "of", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "she", "she'd", "she'll", "she's", "should", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "we", "we'd", "we'll", "we're", "we've", "were", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "would", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves" ]
 
 #HYPERPARAMETERS
-VOCAB_SIZE = 10000 #(1000)
-EMBEDDING_DIM = 16
+EMBEDDING_DIM = 100
 MAX_LENGTH = 120 #(16)
 NUM_EPOCHS = 30
 NUMBER_DATA = 16
 TRAIN_SIZE=0.8
 
-#GET data
+#GET DATA
 classes = []
 texts = []
 
-df = pd.read_csv("training.1600000.processed.noemoticon.csv", nrows=1600000, encoding='latin-1', names=['label' , 'ID', 'Date', 'Query', 'Name','Text'])
-
-#@FakerPattyPattz Oh dear. Were you drinking out of the forgotten table drinks?
-
-print(df['Text'][19])
+df = pd.read_csv("training.1600000.processed.noemoticon.csv", encoding='latin-1', names=['label' , 'ID', 'Date', 'Query', 'Name','Text'])
+df = df.sample(n=160000)
 
 classes = df['label'].to_list()
 
@@ -52,10 +50,12 @@ for i in range(0, len(texts)):
 
 
 
-#TEXT
-tokenizer = Tokenizer(num_words=VOCAB_SIZE,oov_token='OOV')
+#TSENTENCES
+tokenizer = Tokenizer()
 tokenizer.fit_on_texts(train_sentences)
 word_index = tokenizer.word_index
+
+VOCAB_SIZE = len(word_index.items())
 
 train_sequences = tokenizer.texts_to_sequences(train_sentences)
 train_sequences_padded = pad_sequences(train_sequences,padding='post',maxlen=MAX_LENGTH)
@@ -72,3 +72,32 @@ test_labels = np.where(test_labels==4, 1, test_labels)
 
 print(np.unique(test_labels))
 print(np.unique(train_labels))
+
+
+pre_trained_dict = get_pre_trained_weights()
+#each weight is a (1, emb_dimension) array
+#all weights are a (voc_size, emb_dimension) matrix
+matrix_pre_trained_weights = np.zeros((VOCAB_SIZE+1, EMBEDDING_DIM));
+
+for word, i in word_index.items():
+    if word in pre_trained_dict:
+        print('True')
+        matrix_pre_trained_weights[i] = pre_trained_dict[word]
+
+
+#MODEL
+model = tf.keras.Sequential([
+    tf.keras.layers.Embedding(VOCAB_SIZE+1, EMBEDDING_DIM,input_length=MAX_LENGTH, weights=[matrix_pre_trained_weights]),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64, return_sequences=True)),  #cell state of LSTM goes in both directions
+    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
+model.summary()
+
+
+hist = model.fit(train_sequences_padded,train_labels, epochs=NUM_EPOCHS,
+            validation_data=(test_sequences_padded, test_labels))
