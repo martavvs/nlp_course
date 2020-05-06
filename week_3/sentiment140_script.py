@@ -55,7 +55,8 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(train_sentences)
 word_index = tokenizer.word_index
 
-VOCAB_SIZE = len(word_index.items())
+VOCAB_SIZE = len(word_index) + 1
+#plus 1 to consider OOV words
 
 train_sequences = tokenizer.texts_to_sequences(train_sentences)
 train_sequences_padded = pad_sequences(train_sequences,padding='post',maxlen=MAX_LENGTH)
