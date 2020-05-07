@@ -29,3 +29,6 @@ https://nlp.stanford.edu/projects/glove/
 
 ## Week 4
 Sequece models and literature
+
+The data used for the exercises of this week is inside the week 4 folder.
+In this week, I developed a LSTM network, trained using lyrics from songs or sonnets and then used it to predict text
