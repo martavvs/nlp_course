@@ -8,7 +8,7 @@ import re
 data = open("sonnets.txt").read()
 sentences = data.lower().split('\n')
 
-print(sentences[0])
+print(sentences)
 
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(sentences)
@@ -22,16 +22,16 @@ sequences = tokenizer.texts_to_sequences(sentences)
 x_sequences = []
 y_labels = []
 for token in sequences:
-    print(token)
     if len(token)>0:
         x_sequences.append(token[:-1])
         y_labels.append(token[-1])
 
 num_sentences = len(x_sequences)
+print(x_sequences)
 
 #one-hot encoded the y_labels
 y_labels = tf.keras.utils.to_categorical(y_labels, num_classes=num_words)
-print(y_labels[0])
+print(y_labels)
 
 MAX_LEN = max([len(sentence) for sentence in x_sequences])
 print(MAX_LEN)
@@ -41,10 +41,10 @@ x_sequences = np.array(pad_sequences(x_sequences,padding= 'pre' ,maxlen=MAX_LEN)
 
 #MODEL
 model = tf.keras.Sequential([
-    tf.keras.layers.Embedding(num_words, 64, input_length=MAX_LEN),
+    tf.keras.layers.Embedding(num_words, 100, input_length=MAX_LEN),
     tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(150, return_sequences = True)),
     tf.keras.layers.Dropout(0.2),
-    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(150)),
+    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(100)),
     tf.keras.layers.Dense(num_words/2,kernel_regularizer=regularizers.l2(0.01),activation= 'relu'),
     tf.keras.layers.Dense(num_words, activation= 'softmax' )
 ])
@@ -52,7 +52,7 @@ opt = tf.keras.optimizers.Adam(learning_rate=0.01)
 model.compile(loss= 'categorical_crossentropy' ,optimizer= opt,metrics=[ 'accuracy' ])
 model.summary()
 
-NUM_EPOCHS = 100
+NUM_EPOCHS = 200
 hist = model.fit(x_sequences, y_labels, epochs=NUM_EPOCHS)
 
 #Prediction
